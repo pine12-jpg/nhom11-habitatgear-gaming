@@ -27,18 +27,27 @@ export function usePagination(items, resetKey = "", pageSize = ADMIN_PAGE_SIZE) 
   };
 }
 
-/** Thanh số trang:  Trước  1 2 3 … 10  Tiếp  (chỉ hiện khi có từ 2 trang trở lên) */
+/**
+ * Dãy số trang rút gọn: luôn hiện 2 trang đầu, 2 trang cuối và trang hiện tại (kèm 1 trang hai bên),
+ * phần bị ẩn thay bằng "…".  Ví dụ 5 trang, đang ở trang 1:  1 2 … 4 5
+ */
+export function buildPages(page, totalPages) {
+  const show = new Set([1, 2, totalPages - 1, totalPages, page - 1, page, page + 1]);
+  const nums = [...show].filter((n) => n >= 1 && n <= totalPages).sort((a, b) => a - b);
+  const out = [];
+  nums.forEach((n, i) => {
+    if (i > 0 && n - nums[i - 1] > 1) out.push("gap-" + n);
+    out.push(n);
+  });
+  return out;
+}
+
+/** Thanh số trang:  ‹ Trước  1 2 … 4 5  Tiếp ›  Cuối »  (chỉ hiện khi có từ 2 trang trở lên) */
 export default function AdminPagination({ pager }) {
   const { page, totalPages, setPage, from, to, total } = pager;
   if (totalPages <= 1) return null;
 
-  // Hiện tối đa 10 số trang, trượt theo trang hiện tại
-  const WINDOW = 10;
-  let first = Math.max(1, page - Math.floor(WINDOW / 2));
-  const last = Math.min(totalPages, first + WINDOW - 1);
-  first = Math.max(1, last - WINDOW + 1);
-  const numbers = [];
-  for (let n = first; n <= last; n++) numbers.push(n);
+  const items = buildPages(page, totalPages);
 
   const go = (n) => {
     setPage(n);
@@ -52,8 +61,10 @@ export default function AdminPagination({ pager }) {
         {page > 1 && (
           <button type="button" className="admin-pager-step" onClick={() => go(page - 1)}>‹ Trước</button>
         )}
-        {numbers.map((n) =>
-          n === page ? (
+        {items.map((n) =>
+          typeof n === "string" ? (
+            <span key={n} className="admin-pager-gap">…</span>
+          ) : n === page ? (
             <span key={n} className="admin-pager-num current" aria-current="page">{n}</span>
           ) : (
             <button key={n} type="button" className="admin-pager-num" onClick={() => go(n)}>{n}</button>
@@ -61,6 +72,9 @@ export default function AdminPagination({ pager }) {
         )}
         {page < totalPages && (
           <button type="button" className="admin-pager-step" onClick={() => go(page + 1)}>Tiếp ›</button>
+        )}
+        {page < totalPages && (
+          <button type="button" className="admin-pager-step" onClick={() => go(totalPages)} title={`Đến trang cuối (${totalPages})`}>Cuối »</button>
         )}
       </nav>
     </div>
