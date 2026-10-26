@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
+import AdminPagination, { usePagination } from "../../components/AdminPagination";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { formatVND, formatDateTime, ORDER_STATUS_LABEL, PAYMENT_METHOD_LABEL, PAYMENT_STATUS_LABEL } from "../../utils/format";
@@ -39,6 +40,8 @@ export default function AdminOrders() {
     }
   }
 
+  const pager = usePagination(orders, status);
+
   return (
     <AdminLayout title="Quản lý đơn hàng">
       <div className="toolbar-row">
@@ -56,7 +59,7 @@ export default function AdminOrders() {
               <tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Thanh toán</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
+              {pager.pageItems.map((o) => (
                 <Fragment key={o.id}>
                   <tr>
                     <td><strong>{o.code}</strong></td>
@@ -110,6 +113,7 @@ export default function AdminOrders() {
             </tbody>
           </table>
         </div>
+        <AdminPagination pager={pager} />
       </div>
     </AdminLayout>
   );

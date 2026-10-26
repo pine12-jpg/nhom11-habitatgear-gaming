@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
+import AdminPagination, { usePagination } from "../../components/AdminPagination";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { formatVND } from "../../utils/format";
@@ -85,6 +86,8 @@ export default function AdminProducts() {
 
   const filtered = products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
 
+  const pager = usePagination(filtered, q);
+
   return (
     <AdminLayout title="Quản lý sản phẩm">
       <div className="toolbar-row">
@@ -101,7 +104,7 @@ export default function AdminProducts() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
+              {pager.pageItems.map((p) => (
                 <tr key={p.id}>
                   <td className="flex items-center gap-8">
                     <span className="mini-thumb"><ProductImage product={p} /></span>
@@ -126,6 +129,7 @@ export default function AdminProducts() {
             </tbody>
           </table>
         </div>
+        <AdminPagination pager={pager} />
       </div>
 
       {modal && (

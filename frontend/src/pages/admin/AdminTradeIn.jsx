@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
+import AdminPagination, { usePagination } from "../../components/AdminPagination";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { formatDateTime, formatVND } from "../../utils/format";
@@ -41,13 +42,15 @@ export default function AdminTradeIn() {
     }
   }
 
+  const pager = usePagination(list, "");
+
   return (
     <AdminLayout title="Thu cũ - Đổi mới">
       <div className="card">
         <table className="data-table">
           <thead><tr><th>Khách hàng</th><th>Thiết bị</th><th>Tình trạng</th><th>Mô tả</th><th>Ngày gửi</th><th>Trạng thái</th><th></th></tr></thead>
           <tbody>
-            {list.map((t) => (
+            {pager.pageItems.map((t) => (
               <tr key={t.id}>
                 <td>{t.userName}</td>
                 <td>{t.deviceType} — {t.model}</td>
@@ -70,6 +73,7 @@ export default function AdminTradeIn() {
             ))}
           </tbody>
         </table>
+      <AdminPagination pager={pager} />
       </div>
 
       {reviewing && (

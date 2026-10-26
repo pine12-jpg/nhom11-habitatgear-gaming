@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
+import AdminPagination, { usePagination } from "../../components/AdminPagination";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { formatDate } from "../../utils/format";
@@ -53,6 +54,8 @@ export default function AdminCustomers() {
     (u) => u.name.toLowerCase().includes(q.toLowerCase()) || (u.email || "").includes(q) || (u.phone || "").includes(q)
   );
 
+  const pager = usePagination(filtered, q);
+
   return (
     <AdminLayout title="Quản lý tài khoản khách hàng">
       <div className="toolbar-row">
@@ -64,7 +67,7 @@ export default function AdminCustomers() {
           <table className="data-table">
             <thead><tr><th>Họ tên</th><th>Email</th><th>SĐT</th><th>Vai trò</th><th>Đơn hàng</th><th>HSSV</th><th>Ngày tạo</th><th>Trạng thái</th><th></th></tr></thead>
             <tbody>
-              {filtered.map((u) => (
+              {pager.pageItems.map((u) => (
                 <tr key={u.id}>
                   <td>{u.name}</td>
                   <td>{u.email || "—"}</td>
@@ -86,6 +89,7 @@ export default function AdminCustomers() {
             </tbody>
           </table>
         </div>
+        <AdminPagination pager={pager} />
       </div>
 
       {lockTarget && (
