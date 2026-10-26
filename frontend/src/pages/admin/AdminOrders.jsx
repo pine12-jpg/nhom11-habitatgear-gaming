@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import AdminPagination, { usePagination } from "../../components/AdminPagination";
+import DateRangeFilter, { inDateRange } from "../../components/DateRangeFilter";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import { formatVND, formatDateTime, ORDER_STATUS_LABEL, PAYMENT_METHOD_LABEL, PAYMENT_STATUS_LABEL } from "../../utils/format";
@@ -13,6 +14,9 @@ export default function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [status, setStatus] = useState("");
   const [expanded, setExpanded] = useState(null);
+  const [q, setQ] = useState("");
+  const [from, setFrom] = useState(""); // lọc theo ngày đặt hàng
+  const [to, setTo] = useState("");
   const toast = useToast();
 
   function load() {
@@ -40,16 +44,37 @@ export default function AdminOrders() {
     }
   }
 
-  const pager = usePagination(orders, status);
+  // Tìm theo mã đơn, tên/SĐT khách, tên hoặc ID sản phẩm trong đơn + lọc khoảng ngày đặt
+  const kw = q.trim().toLowerCase().replace(/^#/, "");
+  const filtered = orders.filter((o) => {
+    if (!inDateRange(o.createdAt, from, to)) return false;
+    if (!kw) return true;
+    return (
+      (o.code || "").toLowerCase().includes(kw) ||
+      (o.customerName || "").toLowerCase().includes(kw) ||
+      (o.shipping?.name || "").toLowerCase().includes(kw) ||
+      (o.shipping?.phone || "").includes(kw) ||
+      (o.items || []).some((i) => String(i.productId) === kw || (i.name || "").toLowerCase().includes(kw))
+    );
+  });
+  const pager = usePagination(filtered, `${status}|${q}|${from}|${to}`);
 
   return (
     <AdminLayout title="Quản lý đơn hàng">
       <div className="toolbar-row">
-        <select className="form-control" style={{ width: 220 }} value={status} onChange={(e) => setStatus(e.target.value)}>
+        <input
+          className="search-mini"
+          style={{ minWidth: 300 }}
+          placeholder="Tìm mã đơn, tên khách, SĐT, tên / ID sản phẩm…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+        />
+        <select className="form-control" style={{ width: 200 }} value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="">Tất cả trạng thái</option>
           {STATUSES.map((s) => <option key={s} value={s}>{ORDER_STATUS_LABEL[s]}</option>)}
         </select>
-        <span className="muted">{orders.length} đơn hàng</span>
+        <DateRangeFilter label="Ngày đặt" from={from} to={to} onFrom={setFrom} onTo={setTo} />
+        <span className="muted">{filtered.length} đơn hàng</span>
       </div>
 
       <div className="card">
@@ -59,6 +84,9 @@ export default function AdminOrders() {
               <tr><th>Mã đơn</th><th>Khách hàng</th><th>Ngày đặt</th><th>Thanh toán</th><th>Tổng tiền</th><th>Trạng thái</th><th></th></tr>
             </thead>
             <tbody>
+              {pager.pageItems.length === 0 && (
+                <tr><td colSpan={7} className="muted" style={{ textAlign: "center", padding: 24 }}>Không có đơn hàng phù hợp.</td></tr>
+              )}
               {pager.pageItems.map((o) => (
                 <Fragment key={o.id}>
                   <tr>

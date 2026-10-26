@@ -84,14 +84,23 @@ export default function AdminProducts() {
     }
   }
 
-  const filtered = products.filter((p) => p.name.toLowerCase().includes(q.toLowerCase()));
+  // Tìm theo tên, ID (gõ 7 hoặc #7), hãng hoặc ngành hàng
+  const kw = q.trim().toLowerCase().replace(/^#/, "");
+  const filtered = products.filter(
+    (p) =>
+      !kw ||
+      String(p.id) === kw ||
+      p.name.toLowerCase().includes(kw) ||
+      (p.brandName || "").toLowerCase().includes(kw) ||
+      (p.categoryName || "").toLowerCase().includes(kw)
+  );
 
   const pager = usePagination(filtered, q);
 
   return (
     <AdminLayout title="Quản lý sản phẩm">
       <div className="toolbar-row">
-        <input className="search-mini" placeholder="Tìm sản phẩm…" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="search-mini" placeholder="Tìm theo tên, ID (vd: 7), hãng…" value={q} onChange={(e) => setQ(e.target.value)} />
         <button className="btn btn-primary" onClick={openNew}>+ Thêm sản phẩm</button>
       </div>
 
@@ -100,12 +109,13 @@ export default function AdminProducts() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>Sản phẩm</th><th>Hãng</th><th>Ngành hàng</th><th>Giá</th><th>Tồn kho</th><th>Nổi bật</th><th></th>
+                <th>ID</th><th>Sản phẩm</th><th>Hãng</th><th>Ngành hàng</th><th>Giá</th><th>Tồn kho</th><th>Nổi bật</th><th></th>
               </tr>
             </thead>
             <tbody>
               {pager.pageItems.map((p) => (
                 <tr key={p.id}>
+                  <td className="muted">#{p.id}</td>
                   <td className="flex items-center gap-8">
                     <span className="mini-thumb"><ProductImage product={p} /></span>
                     {p.name}

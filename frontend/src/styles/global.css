@@ -343,6 +343,12 @@ img.product-photo,
 .pagination button.active { background: var(--red-600); color: #fff; border-color: var(--red-600); }
 .pagination button:disabled { opacity: .4; cursor: not-allowed; }
 
+/* ---------- Bộ lọc ngày (trang admin) ---------- */
+.date-range { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.date-range-label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+.date-range .form-control { width: 150px; padding: 7px 10px; font-size: 13px; }
+.date-range-sep { color: var(--gray-400); }
+
 /* ---------- Phân trang trang admin ---------- */
 .admin-pager { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 4px 2px; }
 .admin-pager-info { font-size: 13px; color: var(--gray-600); }
