@@ -357,6 +357,7 @@ img.product-photo,
 .admin-pager-nav button:active { transform: scale(.94); }
 .admin-pager-num.current { background: var(--red-600); color: #fff; cursor: default; box-shadow: 0 3px 10px rgba(226, 18, 33, 0.35); }
 .admin-pager-step { padding: 0 12px !important; }
+.admin-pager-gap { min-width: 22px; text-align: center; color: var(--gray-400); font-weight: 700; user-select: none; }
 
 /* ---------- Compare bar ---------- */
 .compare-bar {
