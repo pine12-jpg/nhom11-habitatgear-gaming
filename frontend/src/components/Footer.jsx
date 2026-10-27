@@ -17,6 +17,7 @@ export default function Footer() {
               <li><Link to="/showroom">Hệ thống showroom</Link></li>
               <li><Link to="/tin-tuc">Tin tức - Review</Link></li>
               <li><Link to="/thu-cu-doi-moi">Thu cũ - Đổi mới</Link></li>
+              <li><Link to="/kiem-tra-gear">🧪 Kiểm tra bàn phím - chuột</Link></li>
             </ul>
           </div>
           <div>

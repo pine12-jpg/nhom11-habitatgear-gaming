@@ -6,6 +6,8 @@ import HeroCarousel from "../components/HeroCarousel";
 import PromoGrid from "../components/PromoGrid";
 import FlashSaleBanner from "../components/FlashSaleBanner";
 import SpotlightBanner from "../components/SpotlightBanner";
+import SetupBuilder from "../components/SetupBuilder";
+import Reveal from "../components/Reveal";
 
 /** US06 — Trang chủ: sản phẩm nổi bật, khuyến mãi, hãng, danh mục, tin tức */
 export default function Home() {
@@ -22,33 +24,41 @@ export default function Home() {
       <HeroCarousel />
       <PromoGrid />
 
-      <section className="section-title">
-        <h2>Danh mục sản phẩm</h2>
-      </section>
-      <div className="category-grid mt-16">
-        {data.categories.map((c) => (
-          <Link key={c.id} to={`/san-pham?category=${c.slug}`} className="category-card">
-            <div className="ico">{c.icon}</div>
-            {c.name}
-          </Link>
-        ))}
-      </div>
+      <Reveal>
+        <section className="section-title">
+          <h2>Danh mục sản phẩm</h2>
+        </section>
+        <div className="category-grid mt-16">
+          {data.categories.map((c) => (
+            <Link key={c.id} to={`/san-pham?category=${c.slug}`} className="category-card">
+              <div className="ico">{c.icon}</div>
+              {c.name}
+            </Link>
+          ))}
+        </div>
+      </Reveal>
 
-      <section className="section-title mt-24">
-        <h2>Thương hiệu nổi bật</h2>
-      </section>
-      <div className="brand-strip">
-        {data.brands.map((b) => (
-          <Link key={b.id} to={`/san-pham?brand=${b.id}`} className="brand-chip">
-            {b.name}
-          </Link>
-        ))}
-      </div>
+      <Reveal>
+        <section className="section-title mt-24">
+          <h2>Thương hiệu nổi bật</h2>
+        </section>
+        <div className="brand-strip">
+          {data.brands.map((b) => (
+            <Link key={b.id} to={`/san-pham?brand=${b.id}`} className="brand-chip">
+              {b.name}
+            </Link>
+          ))}
+        </div>
+      </Reveal>
 
-      <FlashSaleBanner />
+      <Reveal className="mt-24">
+        <SetupBuilder />
+      </Reveal>
+
+      <Reveal><FlashSaleBanner /></Reveal>
 
       {data.onSale.length > 0 && (
-        <>
+        <Reveal>
           <section className="section-title mt-24">
             <h2>🔥 Đang khuyến mãi</h2>
             <Link className="more" to="/san-pham?sale=1">Xem tất cả ›</Link>
@@ -56,9 +66,10 @@ export default function Home() {
           <div className="product-grid">
             {data.onSale.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
-        </>
+        </Reveal>
       )}
 
+      <Reveal>
       <SpotlightBanner
         tone="dark"
         icon="💻"
@@ -68,15 +79,19 @@ export default function Home() {
         cta="Khám phá ASUS ROG"
         link="/san-pham?brand=1"
       />
+      </Reveal>
 
-      <section className="section-title mt-24">
-        <h2>⭐ Sản phẩm nổi bật</h2>
-        <Link className="more" to="/san-pham?featured=1">Xem tất cả ›</Link>
-      </section>
-      <div className="product-grid">
-        {data.featured.map((p) => <ProductCard key={p.id} product={p} />)}
-      </div>
+      <Reveal>
+        <section className="section-title mt-24">
+          <h2>⭐ Sản phẩm nổi bật</h2>
+          <Link className="more" to="/san-pham?featured=1">Xem tất cả ›</Link>
+        </section>
+        <div className="product-grid">
+          {data.featured.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </Reveal>
 
+      <Reveal>
       <SpotlightBanner
         tone="red"
         icon="🖱️"
@@ -86,17 +101,32 @@ export default function Home() {
         cta="Khám phá Razer"
         link="/san-pham?brand=7"
       />
+      </Reveal>
 
-      <section className="section-title mt-24">
-        <h2>🆕 Hàng mới về</h2>
-        <Link className="more" to="/san-pham">Xem tất cả ›</Link>
-      </section>
-      <div className="product-grid">
-        {data.newest.map((p) => <ProductCard key={p.id} product={p} />)}
-      </div>
+      <Reveal>
+        <section className="section-title mt-24">
+          <h2>🆕 Hàng mới về</h2>
+          <Link className="more" to="/san-pham">Xem tất cả ›</Link>
+        </section>
+        <div className="product-grid">
+          {data.newest.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      </Reveal>
+
+      <Reveal>
+        <SpotlightBanner
+          tone="dark"
+          icon="🧪"
+          eyebrow="Công cụ miễn phí cho game thủ"
+          title="Kiểm tra bàn phím & chuột ngay trên trình duyệt"
+          desc="Phát hiện phím liệt, lỗi double-click, đo tốc độ click (CPS) — không cần cài phần mềm."
+          cta="Thử ngay"
+          link="/kiem-tra-gear"
+        />
+      </Reveal>
 
       {data.news.length > 0 && (
-        <>
+        <Reveal>
           <section className="section-title mt-24">
             <h2>📰 Tin tức - Review</h2>
             <Link className="more" to="/tin-tuc">Xem tất cả ›</Link>
@@ -112,7 +142,7 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </>
+        </Reveal>
       )}
     </div>
   );

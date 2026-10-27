@@ -4,6 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 
 import Home from "./pages/Home";
+import GearTest from "./pages/GearTest";
 import ProductList from "./pages/ProductList";
 import ProductDetail from "./pages/ProductDetail";
 import Compare from "./pages/Compare";
@@ -60,6 +61,7 @@ export default function App() {
       <Route path="/don-hang" element={<Layout><ProtectedRoute><OrderHistory /></ProtectedRoute></Layout>} />
       <Route path="/don-hang/:id" element={<Layout><ProtectedRoute><OrderDetail /></ProtectedRoute></Layout>} />
       <Route path="/thu-cu-doi-moi" element={<Layout><ProtectedRoute><TradeIn /></ProtectedRoute></Layout>} />
+      <Route path="/kiem-tra-gear" element={<Layout><GearTest /></Layout>} />
       <Route path="/showroom" element={<Layout><Showrooms /></Layout>} />
       <Route path="/tin-tuc" element={<Layout><News /></Layout>} />
       <Route path="/tin-tuc/:id" element={<Layout><NewsDetail /></Layout>} />

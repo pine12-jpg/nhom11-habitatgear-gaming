@@ -7,6 +7,7 @@ import { CartProvider } from "./context/CartContext";
 import { CompareProvider } from "./context/CompareContext";
 import { ToastProvider } from "./context/ToastContext";
 import "./styles/global.css";
+import "./styles/wow.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
