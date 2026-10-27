@@ -5,6 +5,7 @@ import { formatVND, formatDate } from "../utils/format";
 import StarRating from "../components/StarRating";
 import ProductCard from "../components/ProductCard";
 import ProductImage from "../components/ProductImage";
+import ImageMagnifier from "../components/ImageMagnifier";
 import { useCart } from "../context/CartContext";
 import { useCompare } from "../context/CompareContext";
 import { useAuth } from "../context/AuthContext";
@@ -92,7 +93,7 @@ export default function ProductDetail() {
 
       <div className="detail-layout">
         <div>
-          <div className="detail-thumb"><ProductImage product={product} /></div>
+          <ImageMagnifier product={product} />
           <label className="filter-option mt-16">
             <input
               type="checkbox"
