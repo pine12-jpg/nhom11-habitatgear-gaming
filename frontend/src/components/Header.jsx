@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import useAutoScroll from "../hooks/useAutoScroll";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -49,6 +50,9 @@ export default function Header() {
     document.fonts?.ready?.then(measure);
     return () => window.removeEventListener("resize", measure);
   }, [activeKey, categories]);
+
+  // Thanh menu tự trượt qua lại; dừng khi rê chuột vào hoặc khi khách tự cuộn
+  useAutoScroll(navRef);
 
   useEffect(() => {
     api.get("/categories").then(({ data }) => setCategories(data)).catch(() => {});

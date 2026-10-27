@@ -130,3 +130,8 @@
 .cps-pad.run:active { transform: scale(.98); }
 .cps-pad.done { border-style: solid; border-color: #16a34a; background: #e8f8ee; color: #166534; }
 .cps-pad strong { font-size: 24px; }
+
+/* ================= THANH MENU TỰ TRƯỢT ================= */
+/* Ẩn thanh cuộn xám có mũi tên; menu tự chạy, vẫn vuốt / lăn chuột ngang được */
+.nav-bar .container { scrollbar-width: none; -ms-overflow-style: none; }
+.nav-bar .container::-webkit-scrollbar { display: none; }
