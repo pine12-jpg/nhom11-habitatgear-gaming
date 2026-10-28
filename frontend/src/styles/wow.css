@@ -136,18 +136,18 @@
 .nav-bar .container { scrollbar-width: none; -ms-overflow-style: none; }
 .nav-bar .container::-webkit-scrollbar { display: none; }
 
-/* ================= KÍNH LÚP TRÊN ẢNH SẢN PHẨM ================= */
+/* ================= KÍNH LÚP NHỎ (LĂN CHUỘT ĐỂ PHÓNG TO / THU NHỎ) TRÊN ẢNH SẢN PHẨM ================= */
 .magnifier { position: relative; }
-@media (hover: hover) and (pointer: fine) { .magnifier { cursor: none; } }
+@media (hover: hover) and (pointer: fine) { .magnifier { cursor: crosshair; } }
 .magnifier-hint { position: absolute; left: 12px; bottom: 12px; padding: 5px 10px; border-radius: 999px; background: rgba(18, 21, 28, .72); color: #fff; font-size: 12px; font-weight: 600; pointer-events: none; transition: opacity .25s ease, transform .25s ease; }
 .magnifier-hint.hide { opacity: 0; transform: translateY(6px); }
 @media (hover: none) { .magnifier-hint { display: none; } }
 
-.lens { position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none; opacity: 0; will-change: transform; transition: opacity .18s ease; }
+.lens { position: absolute; left: 0; top: 0; z-index: 5; pointer-events: none; opacity: 0; will-change: transform; transition: opacity .15s ease; }
 .lens.on { opacity: 1; }
-.lens-glass { position: absolute; inset: 0; border-radius: 50%; overflow: hidden; background: #eef1f6; border: 4px solid #fff; box-shadow: 0 0 0 1.5px rgba(18, 21, 28, .35), 0 14px 34px rgba(0, 0, 0, .38), inset 0 0 18px rgba(0, 0, 0, .18); transform: scale(.82); transition: transform .22s cubic-bezier(.34, 1.56, .64, 1); }
+.lens-glass { position: absolute; inset: 0; border-radius: 4px; overflow: hidden; background: #eef1f6; border: 3px solid var(--red-600); box-shadow: 0 0 0 2px rgba(255, 255, 255, .9), 0 12px 30px rgba(0, 0, 0, .35); transform: scale(.9); transition: transform .2s cubic-bezier(.34, 1.56, .64, 1); }
 .lens.on .lens-glass { transform: scale(1); }
-.lens-glass::after { content: ""; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(circle at 28% 24%, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0) 38%); pointer-events: none; }
+.lens-glass::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 35%); pointer-events: none; }
 .lens-stage { position: absolute; left: 0; top: 0; will-change: transform; }
-.lens-handle { position: absolute; left: 84.5%; top: 84.5%; width: 14px; height: 58px; margin-left: -7px; border-radius: 8px; background: linear-gradient(90deg, #4a5368, #1a1f2c); box-shadow: 0 6px 14px rgba(0, 0, 0, .35); transform-origin: 50% 0; transform: rotate(-45deg); }
+.lens-zoom { position: absolute; right: 4px; bottom: 4px; padding: 1px 6px; border-radius: 4px; background: rgba(18, 21, 28, .78); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .02em; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) { .lens, .lens-glass, .magnifier-hint { transition: none; } }
