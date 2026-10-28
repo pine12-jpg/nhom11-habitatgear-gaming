@@ -15,7 +15,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(v, hi));
  * tâm khung luôn khớp với vùng ảnh nằm dưới nó. Khung không chạy ra ngoài mép ảnh.
  * Màn hình cảm ứng (ngón tay) không bật kính lúp để không cản việc cuộn trang.
  */
-export default function ImageMagnifier({ product, initialZoom = 2.5, lensSize = 150 }) {
+export default function ImageMagnifier({ product, initialZoom = 2.5, lensSize = 110 }) {
   const hostRef = useRef(null);
   const [zoom, setZoom] = useState(initialZoom);
   const [pos, setPos] = useState({ on: false, x: 0, y: 0, w: 0, h: 0 });
@@ -52,7 +52,6 @@ export default function ImageMagnifier({ product, initialZoom = 2.5, lensSize = 
   return (
     <div className="magnifier" ref={hostRef} onPointerMove={onMove} onPointerLeave={onLeave}>
       <div className="detail-thumb"><ProductImage product={product} /></div>
-      <span className={`magnifier-hint${pos.on ? " hide" : ""}`}>🔍 Rê chuột vào ảnh • lăn chuột để phóng to / thu nhỏ</span>
 
       {pos.w > 0 && (
         <div
