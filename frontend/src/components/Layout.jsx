@@ -2,6 +2,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import CompareBar from "./CompareBar";
 import FabMenu from "./FabMenu";
+import ChatBot from "./ChatBot";
 
 export default function Layout({ children }) {
   return (
@@ -11,6 +12,7 @@ export default function Layout({ children }) {
       <Footer />
       <CompareBar />
       <FabMenu />
+      <ChatBot />
     </>
   );
 }
