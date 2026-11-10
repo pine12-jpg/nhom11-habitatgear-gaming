@@ -26,7 +26,10 @@ export default function SetupFab() {
 
   return (
     <Link to={SETUP_PATH} className="setup-fab" aria-label="Dựng góc setup mơ ước" title="Dựng góc setup mơ ước">
-      <span className="setup-fab-icon">🖥️</span>
+      <svg className="setup-fab-icon" viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+        <rect x="3" y="4" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2" fill="none" />
+        <path d="M9 20h6M12 16v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" />
+      </svg>
       <span className="setup-fab-label">Dựng setup</span>
       {count > 0 && <span className="setup-fab-badge">{count}</span>}
     </Link>
