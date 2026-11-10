@@ -1,8 +1,7 @@
 import Header from "./Header";
 import Footer from "./Footer";
 import CompareBar from "./CompareBar";
-import SetupFab from "./SetupFab";
-import ZaloFab from "./ZaloFab";
+import FabMenu from "./FabMenu";
 
 export default function Layout({ children }) {
   return (
@@ -11,11 +10,7 @@ export default function Layout({ children }) {
       <main>{children}</main>
       <Footer />
       <CompareBar />
-      {/* Cụm nút tròn nổi ở mép phải: Zalo (trên) + Dựng setup (dưới) */}
-      <div className="fab-stack">
-        <ZaloFab />
-        <SetupFab />
-      </div>
+      <FabMenu />
     </>
   );
 }

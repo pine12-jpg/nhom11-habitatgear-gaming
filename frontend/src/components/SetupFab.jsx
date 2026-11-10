@@ -5,7 +5,7 @@ import "../styles/setupFab.css";
 export const SETUP_PATH = "/dung-setup";
 
 /** Đếm số món đã chọn trong bộ setup (đọc từ sessionStorage) */
-function countPicked() {
+export function countPicked() {
   try {
     const data = JSON.parse(sessionStorage.getItem(SETUP_STORAGE_KEY)) || {};
     return Object.values(data).filter(Boolean).length;
