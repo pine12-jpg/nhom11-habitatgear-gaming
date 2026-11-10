@@ -1,7 +1,7 @@
 import Header from "./Header";
 import Footer from "./Footer";
 import CompareBar from "./CompareBar";
-import SetupBuilder from "./SetupBuilder";
+import SetupFab from "./SetupFab";
 
 export default function Layout({ children }) {
   return (
@@ -10,7 +10,7 @@ export default function Layout({ children }) {
       <main>{children}</main>
       <Footer />
       <CompareBar />
-      <SetupBuilder />
+      <SetupFab />
     </>
   );
 }
