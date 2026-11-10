@@ -213,8 +213,11 @@ const BOT_CSS = `
 .cb-typing i { width: 6px; height: 6px; border-radius: 50%; background: #9aa1ad; animation: cbDot 1s infinite ease-in-out; }
 .cb-typing i:nth-child(2) { animation-delay: .15s; } .cb-typing i:nth-child(3) { animation-delay: .3s; }
 @keyframes cbDot { 0%, 80%, 100% { transform: translateY(0); opacity: .5; } 40% { transform: translateY(-4px); opacity: 1; } }
-.cb-chips { display: flex; gap: 6px; padding: 8px 12px; overflow-x: auto; background: #fff; border-top: 1px solid #eef0f3; scrollbar-width: none; }
-.cb-chips::-webkit-scrollbar { display: none; }
+.cb-chips { display: flex; gap: 6px; padding: 8px 12px 6px; overflow-x: auto; background: #fff; border-top: 1px solid #eef0f3; scrollbar-width: thin; scrollbar-color: #c3c9d3 transparent; }
+.cb-chips::-webkit-scrollbar { height: 6px; }
+.cb-chips::-webkit-scrollbar-thumb { background: #c3c9d3; border-radius: 6px; }
+.cb-chips::-webkit-scrollbar-thumb:hover { background: #e21221; }
+.cb-chips::-webkit-scrollbar-track { background: transparent; }
 .cb-chip { flex: none; padding: 6px 12px; border-radius: 999px; border: 1px solid #dfe3ea; background: #fff; font-size: 12px; font-weight: 600; color: #3a404b; cursor: pointer; white-space: nowrap; }
 .cb-chip:hover { border-color: #e21221; color: #e21221; }
 .cb-input { display: flex; gap: 8px; padding: 10px 12px 12px; background: #fff; }
@@ -442,7 +445,13 @@ export default function ChatBot() {
             {typing && <div className="cb-typing"><i /><i /><i /></div>}
           </div>
 
-          <div className="cb-chips">
+          <div
+            className="cb-chips"
+            onWheel={(e) => {
+              // lăn chuột dọc -> cuộn ngang hàng gợi ý
+              if (e.deltaY !== 0) e.currentTarget.scrollLeft += e.deltaY;
+            }}
+          >
             {SUGGESTIONS.map((s) => (
               <button key={s} type="button" className="cb-chip" onClick={() => send(s)} disabled={typing}>{s}</button>
             ))}
