@@ -6,7 +6,6 @@ import HeroCarousel from "../components/HeroCarousel";
 import PromoGrid from "../components/PromoGrid";
 import FlashSaleBanner from "../components/FlashSaleBanner";
 import SpotlightBanner from "../components/SpotlightBanner";
-import SetupBuilder from "../components/SetupBuilder";
 import Reveal from "../components/Reveal";
 
 /** US06 — Trang chủ: sản phẩm nổi bật, khuyến mãi, hãng, danh mục, tin tức */
@@ -49,10 +48,6 @@ export default function Home() {
             </Link>
           ))}
         </div>
-      </Reveal>
-
-      <Reveal className="mt-24">
-        <SetupBuilder />
       </Reveal>
 
       <Reveal><FlashSaleBanner /></Reveal>
