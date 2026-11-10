@@ -16,6 +16,27 @@ export default function FabMenu() {
 
   useEffect(() => setOpen(false), [pathname]);
 
+  // Hướng cuộn: lướt xuống -> nút trượt xuống thấp, lướt lên -> nút nhích lên cao
+  const [dir, setDir] = useState("down");
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (Math.abs(y - lastY) > 4) {
+          setDir(y > lastY ? "down" : "up");
+          lastY = y;
+        }
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   // Đóng khi bấm ra ngoài hoặc nhấn Esc
   useEffect(() => {
     if (!open) return;
@@ -32,7 +53,7 @@ export default function FabMenu() {
   const count = countPicked();
 
   return (
-    <div ref={ref} className={`fab-menu${open ? " open" : ""}`}>
+    <div ref={ref} className={`fab-menu fab-${dir}${open ? " open" : ""}`}>
       <div className="fab-items" onClick={() => setOpen(false)}>
         <div className="fab-item"><ZaloFab /></div>
         <div className="fab-item"><SetupFab /></div>
