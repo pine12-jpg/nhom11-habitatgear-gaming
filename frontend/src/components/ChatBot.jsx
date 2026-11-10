@@ -25,6 +25,12 @@ const FAQ = [
     reply: "Chào bạn 👋 Mình là trợ lý tự động của GVN Gaming. Bạn cần tìm sản phẩm, hỏi chính sách hay địa chỉ showroom? Cứ hỏi mình nhé!",
   },
   {
+    keys: ["ban la ai", "la ai", "la bot", "chatbot", "la robot", "nguoi that", "co phai nguoi", "co phai ai", "ban biet gi", "biet nhung gi", "biet duoc gi", "lam duoc gi", "giup duoc gi", "ban giup gi", "ban co the lam gi", "huong dan su dung bot"],
+    reply:
+      "🤖 Mình là chatbot tự động của GVN Gaming, không phải nhân viên thật. Mình trả lời theo thông tin của cửa hàng nên có thể chưa hiểu hết những câu hỏi quá lạ.\n\nMình giúp được:\n• Tìm sản phẩm theo ngành hàng, hãng, mức giá (vd \"laptop dưới 30 triệu\")\n• Bảo hành, đổi trả, giao hàng, thanh toán, trả góp\n• Mã giảm giá, thu cũ đổi mới, dựng setup\n• Địa chỉ và giờ mở cửa showroom\n\nCần người thật hỗ trợ thì bạn nhắn Zalo hoặc gọi hotline nhé.",
+    zalo: true,
+  },
+  {
     keys: ["bao hanh"],
     reply:
       "🛡️ Chính sách bảo hành:\n• Laptop, PC gaming: chính hãng 12–24 tháng tùy hãng.\n• Bàn phím, chuột, tai nghe: 12 tháng, 1 đổi 1 trong 30 ngày đầu nếu lỗi nhà sản xuất.\n• Linh kiện PC: theo hãng (thường 36 tháng với RAM, VGA).\n• Kiểm tra, tư vấn kỹ thuật miễn phí tại mọi showroom.",
@@ -48,7 +54,7 @@ const FAQ = [
     links: [{ to: "/huong-dan", label: "Hướng dẫn mua hàng & trả góp" }],
   },
   {
-    keys: ["voucher", "ma giam", "khuyen mai", "giam gia", "coupon", "uu dai", "sale"],
+    keys: ["voucher", "ma giam", "khuyen mai", "giam gia", "coupon", "uu dai", "sale", "code", "ma code", "ma uu dai", "ma khuyen mai", "giam bot", "bot gia"],
     reply:
       "🎁 Mã giảm giá đang có:\n• GVNGAME10 — giảm 10% cho đơn từ 5.000.000đ\n• FREESHIP — giảm 30.000đ phí ship\n• SINHVIEN50K — giảm 50.000đ cho đơn từ 2.000.000đ\nNhập mã ở bước thanh toán nhé!",
     links: [{ to: "/san-pham?sale=1", label: "Xem sản phẩm đang giảm giá" }],
@@ -354,6 +360,7 @@ export default function ChatBot() {
     const priceText = price.min && price.max ? ` trong tầm ${formatVND(Math.round(price.min))} – ${formatVND(Math.round(price.max))}` : price.max ? ` dưới ${formatVND(Math.round(price.max))}` : price.min ? ` từ ${formatVND(Math.round(price.min))} trở lên` : "";
     const what = cat ? cat.label : "sản phẩm";
 
+    if (!list.length && !cat && !price.min && !price.max) return outOfScope();
     if (!list.length) {
       return {
         text: `Mình chưa tìm thấy ${what}${priceText} phù hợp 😅 Bạn thử nới mức giá, đổi hãng hoặc xem toàn bộ danh mục nhé.`,
@@ -367,6 +374,15 @@ export default function ChatBot() {
       links: list.length > 3 && cat ? [{ to: `/san-pham?category=${cat.slug}`, label: `Xem thêm ${cat.label}` }] : [],
     };
   }
+
+  /** Câu hỏi ngoài phạm vi -> mời khách liên hệ nhân viên qua Zalo */
+  const outOfScope = () => ({
+    text: `Câu hỏi này nằm ngoài phạm vi mình hỗ trợ 🙏\nBạn vui lòng liên hệ nhân viên qua Zalo để được tư vấn trực tiếp nhé (hoặc gọi hotline ${HOTLINE}).\n\nMình trả lời nhanh được về sản phẩm, giá, bảo hành, đổi trả, giao hàng, thanh toán, mã giảm giá và showroom.`,
+    zalo: true,
+  });
+
+  /** Mục FAQ dùng trường "reply", còn khung chat hiển thị trường "text" -> đổi tên ở đây */
+  const asReply = (f) => ({ text: f.reply, links: f.links, zalo: f.zalo });
 
   /** Quyết định trả lời gì cho câu khách vừa gõ */
   async function answer(raw) {
@@ -386,7 +402,8 @@ export default function ChatBot() {
     let best = null;
     let bestScore = 0;
     for (const f of FAQ) {
-      const score = f.keys.reduce((s, k) => s + (` ${t} `.includes(` ${k.trim()} `) || t.includes(k) ? k.length : 0), 0);
+      // khớp theo đầu từ: "vouchers" khớp "voucher" nhưng "thi ban" KHÔNG khớp "hi"
+      const score = f.keys.reduce((s, k) => s + (` ${t}`.includes(` ${k.trim()}`) ? k.trim().length : 0), 0);
       if (score > bestScore) { best = f; bestScore = score; }
     }
 
@@ -395,20 +412,17 @@ export default function ChatBot() {
     const mentionsCat = CATEGORY_WORDS.some((c) => c.re.test(t));
     const mentionsPrice = parsePrice(t).min || parsePrice(t).max;
     const mentionsBrandOrModel = catalog.some((p) => {
-      const hay = norm(`${p.name} ${p.brandName}`);
-      return t.split(" ").some((w) => w.length >= 3 && !STOPWORDS.has(w) && hay.includes(w));
+      const hayWords = norm(`${p.name} ${p.brandName}`).split(" ");
+      return t.split(" ").some((w) => w.length >= 3 && !STOPWORDS.has(w) && hayWords.some((h) => h.startsWith(w)));
     });
     const isProductAsk = mentionsCat || mentionsPrice || mentionsBrandOrModel || /\b(goi y|tu van|nen mua|ban chay|hot|moi nhat)\b/.test(t);
 
     // câu hỏi chính sách rõ ràng thắng, trừ khi khách hỏi sản phẩm cụ thể (vd "chuột bảo hành bao lâu" vẫn trả lời bảo hành)
-    if (best && (!isProductAsk || bestScore >= 7)) return best;
+    if (best && (!isProductAsk || bestScore >= 7)) return asReply(best);
     if (isProductAsk) return searchProducts(t);
-    if (best) return best;
+    if (best) return asReply(best);
 
-    return {
-      text: `Mình chưa hiểu rõ ý bạn 😅 Bạn thử hỏi kiểu:\n• "Laptop dưới 30 triệu"\n• "Chuột Razer"\n• "Bảo hành bao lâu?"\n• "Địa chỉ showroom"\nHoặc nhắn trực tiếp nhân viên (hotline ${HOTLINE}).`,
-      zalo: true,
-    };
+    return outOfScope();
   }
 
   async function send(text) {
