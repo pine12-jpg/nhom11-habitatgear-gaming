@@ -264,8 +264,10 @@ p { margin: 0 0 10px; }
 .product-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
 .product-thumb {
   aspect-ratio: 1.15 / 1; display: flex; align-items: center; justify-content: center; font-size: 54px;
-  background: linear-gradient(145deg, #eef1f6, #dfe4ec); position: relative;
+  background: linear-gradient(145deg, #eef1f6, #dfe4ec); position: relative; overflow: hidden; flex: none;
 }
+/* ảnh thật nằm gọn trong khung cố định (không làm khung cao/thấp theo kích thước ảnh gốc) */
+.product-thumb img.product-photo { position: absolute; inset: 0; width: 100%; height: 100%; padding: 10px; box-sizing: border-box; object-fit: contain; }
 .product-visual { width: 60%; height: 60%; filter: drop-shadow(0 6px 10px rgba(20,22,30,.14)); }
 .detail-thumb .product-visual { width: 54%; height: 54%; }
 /* Ảnh thật (img) được hiển thị lớn hơn và dùng object-fit thay vì drop-shadow của SVG */
@@ -299,7 +301,7 @@ img.product-photo,
 .price-original { color: var(--gray-400); text-decoration: line-through; font-size: 12.5px; }
 .product-rating { font-size: 12px; color: var(--amber-500); display: flex; align-items: center; gap: 4px; }
 .product-rating .count { color: var(--gray-600); }
-.product-specs-mini { font-size: 11.5px; color: var(--gray-600); }
+.product-specs-mini { font-size: 11.5px; color: var(--gray-600); line-height: 1.35; min-height: 31px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .stock-warning { font-size: 11.5px; color: var(--orange-500); font-weight: 600; }
 .stock-out { font-size: 11.5px; color: var(--red-700); font-weight: 700; }
 .add-cart-btn {
