@@ -4,7 +4,7 @@ import "../styles/setupFab.css";
  * Thay bằng số Zalo của shop (đúng số điện thoại đã đăng ký Zalo, dạng 0912345678).
  * Link chat sẽ là https://zalo.me/<số điện thoại>
  */
-export const ZALO_PHONE = "0900000000";
+export const ZALO_PHONE = "0908506223";
 
 /**
  * ZaloFab — nút tròn xanh cạnh mép phải màn hình.
