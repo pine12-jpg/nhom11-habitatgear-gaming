@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import AdminLayout from "../../components/AdminLayout";
 import api, { errMsg } from "../../api/client";
 import { useToast } from "../../context/ToastContext";
+import { NEWS_COVERS } from "../../components/NewsCover";
 
-const EMPTY = { title: "", summary: "", content: "", coverIcon: "📰" };
-const ICONS = ["📰", "⌨️", "🖱️", "🎧", "💻", "🖥️", "🖵", "🪑"];
+const EMPTY = { title: "", summary: "", content: "", coverImage: "/news/news-default.svg" };
 
 /** US29 — Admin đăng, sửa, xóa bài viết trên mục Tin tức - Review */
 export default function AdminNews() {
@@ -62,7 +62,7 @@ export default function AdminNews() {
           <tbody>
             {posts.map((p) => (
               <tr key={p.id}>
-                <td style={{ fontSize: 20 }}>{p.coverIcon}</td>
+                <td><img src={p.coverImage || "/news/news-default.svg"} alt="" style={{ width: 72, height: 27, objectFit: "cover", borderRadius: 4, display: "block" }} /></td>
                 <td>{p.title}</td>
                 <td>{p.author}</td>
                 <td>{p.createdAt}</td>
@@ -85,12 +85,16 @@ export default function AdminNews() {
             </div>
             <form onSubmit={save}>
               <div className="form-group">
-                <label>Biểu tượng ảnh bìa</label>
-                <div className="flex gap-8">
-                  {ICONS.map((ic) => (
-                    <button type="button" key={ic} className={`btn btn-sm ${form.coverIcon === ic ? "btn-primary" : "btn-ghost"}`} onClick={() => setForm((f) => ({ ...f, coverIcon: ic }))}>{ic}</button>
+                <label>Ảnh bìa</label>
+                <div className="flex gap-8" style={{ flexWrap: "wrap" }}>
+                  {NEWS_COVERS.map((c) => (
+                    <button type="button" key={c.src} title={c.label} onClick={() => setForm((f) => ({ ...f, coverImage: c.src }))}
+                      style={{ padding: 0, border: form.coverImage === c.src ? "3px solid var(--red, #ef233c)" : "3px solid transparent", borderRadius: 8, overflow: "hidden", cursor: "pointer", background: "none", width: 120 }}>
+                      <img src={c.src} alt={c.label} style={{ width: "100%", display: "block" }} />
+                    </button>
                   ))}
                 </div>
+                <input className="form-control mt-8" placeholder="hoặc dán link ảnh (https://...)" value={form.coverImage || ""} onChange={(e) => setForm((f) => ({ ...f, coverImage: e.target.value }))} />
               </div>
               <div className="form-group">
                 <label>Tiêu đề</label>

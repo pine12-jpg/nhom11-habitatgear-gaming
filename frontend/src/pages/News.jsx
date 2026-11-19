@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/client";
+import NewsCover from "../components/NewsCover";
 
 /** US28 — Đọc tin tức công nghệ, đánh giá, so sánh sản phẩm gaming */
 export default function News() {
@@ -21,7 +22,7 @@ export default function News() {
         <div className="news-grid mt-16">
           {posts.map((n) => (
             <Link key={n.id} to={`/tin-tuc/${n.id}`} className="news-card">
-              <div className="cover">{n.coverIcon}</div>
+              <NewsCover post={n} />
               <div className="body">
                 <div className="meta">{n.author} • {n.createdAt}</div>
                 <h3>{n.title}</h3>

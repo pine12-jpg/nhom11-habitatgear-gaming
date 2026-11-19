@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 806 300" fill="none"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b2030"/><stop offset="1" stop-color="#07090e"/></linearGradient><linearGradient id="ac" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#a855f7"/><stop offset=".5" stop-color="#ec4899"/><stop offset="1" stop-color="#22d3ee"/></linearGradient><linearGradient id="ac2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef233c"/><stop offset="1" stop-color="#7a0f1d"/></linearGradient><radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ec4899" stop-opacity=".35"/><stop offset="1" stop-color="#ec4899" stop-opacity="0"/></radialGradient><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#ffffff" stroke-opacity=".04"/></pattern></defs><rect width="806" height="300" fill="url(#bg)"/><rect width="806" height="300" fill="url(#grid)"/>
+<ellipse cx="403" cy="150" rx="260" ry="120" fill="url(#glow)"/>
+<!-- left GPU -->
+<g transform="translate(70 70)">
+<rect width="270" height="130" rx="14" fill="#12151c" stroke="#3a4256" stroke-width="3"/>
+<rect y="118" width="270" height="12" rx="6" fill="url(#ac)"/>
+<circle cx="75" cy="60" r="42" fill="#0b0e14" stroke="#3a4256" stroke-width="3"/>
+<circle cx="75" cy="60" r="10" fill="#22d3ee"/>
+<g stroke="#22d3ee" stroke-width="5" stroke-linecap="round"><path d="M75 50 V22"/><path d="M84 65 L108 79"/><path d="M66 65 L42 79"/></g>
+<circle cx="195" cy="60" r="42" fill="#0b0e14" stroke="#3a4256" stroke-width="3"/>
+<circle cx="195" cy="60" r="10" fill="#22d3ee"/>
+<g stroke="#22d3ee" stroke-width="5" stroke-linecap="round"><path d="M195 50 V22"/><path d="M204 65 L228 79"/><path d="M186 65 L162 79"/></g>
+<text x="135" y="168" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="30" fill="#fff">RTX 4060</text>
+</g>
+<!-- right GPU -->
+<g transform="translate(466 70)">
+<rect width="270" height="130" rx="14" fill="#12151c" stroke="#ec4899" stroke-width="3"/>
+<rect y="118" width="270" height="12" rx="6" fill="url(#ac)"/>
+<circle cx="75" cy="60" r="42" fill="#0b0e14" stroke="#3a4256" stroke-width="3"/>
+<circle cx="75" cy="60" r="10" fill="#ec4899"/>
+<g stroke="#ec4899" stroke-width="5" stroke-linecap="round"><path d="M75 50 V22"/><path d="M84 65 L108 79"/><path d="M66 65 L42 79"/></g>
+<circle cx="195" cy="60" r="42" fill="#0b0e14" stroke="#3a4256" stroke-width="3"/>
+<circle cx="195" cy="60" r="10" fill="#ec4899"/>
+<g stroke="#ec4899" stroke-width="5" stroke-linecap="round"><path d="M195 50 V22"/><path d="M204 65 L228 79"/><path d="M186 65 L162 79"/></g>
+<text x="135" y="168" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="800" font-size="30" fill="#fff">RTX 4060 Ti</text>
+</g>
+<!-- VS badge -->
+<circle cx="403" cy="135" r="38" fill="url(#ac2)" stroke="#fff" stroke-opacity=".25" stroke-width="3"/>
+<text x="403" y="148" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="34" fill="#fff">VS</text>
+<rect x="253" y="262" width="300" height="5" rx="2.5" fill="url(#ac)"/>
+</svg>

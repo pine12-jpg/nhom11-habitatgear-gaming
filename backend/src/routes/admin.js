@@ -298,7 +298,7 @@ router.post("/news", (req, res) => {
     title: req.body.title.trim(),
     summary: (req.body.summary || req.body.content.trim().slice(0, 120)).trim(),
     content: req.body.content.trim(),
-    coverIcon: req.body.coverIcon || "📰",
+    coverImage: req.body.coverImage || "/news/news-default.svg",
     author: req.user.name,
     createdAt: new Date().toISOString().slice(0, 10),
   };
@@ -317,7 +317,7 @@ router.put("/news/:id", (req, res) => {
   post.title = req.body.title.trim();
   post.content = req.body.content.trim();
   post.summary = (req.body.summary || post.content.slice(0, 120)).trim();
-  post.coverIcon = req.body.coverIcon || post.coverIcon;
+  post.coverImage = req.body.coverImage || post.coverImage || "/news/news-default.svg";
   saveCollection("news", list);
   auditLog(req.user, "Sửa bài viết", post.title);
   res.json(post);

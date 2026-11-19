@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../api/client";
+import NewsCover from "../components/NewsCover";
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function NewsDetail() {
       <div className="breadcrumb"><Link to="/tin-tuc">Tin tức - Review</Link> / {post.title}</div>
       <div className="card" style={{ maxWidth: 820, margin: "0 auto" }}>
         <div className="news-card" style={{ boxShadow: "none" }}>
-          <div className="cover" style={{ height: 180, borderRadius: 10 }}>{post.coverIcon}</div>
+          <NewsCover post={post} style={{ height: 220, borderRadius: 10 }} />
         </div>
         <h1 className="mt-16" style={{ fontSize: 22 }}>{post.title}</h1>
         <p className="muted">{post.author} • {post.createdAt}</p>

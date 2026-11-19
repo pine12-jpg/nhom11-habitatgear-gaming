@@ -7,6 +7,7 @@ import PromoGrid from "../components/PromoGrid";
 import FlashSaleBanner from "../components/FlashSaleBanner";
 import SpotlightBanner from "../components/SpotlightBanner";
 import Reveal from "../components/Reveal";
+import NewsCover from "../components/NewsCover";
 
 /** US06 — Trang chủ: sản phẩm nổi bật, khuyến mãi, hãng, danh mục, tin tức */
 export default function Home() {
@@ -129,7 +130,7 @@ export default function Home() {
           <div className="news-grid">
             {data.news.map((n) => (
               <Link key={n.id} to={`/tin-tuc/${n.id}`} className="news-card">
-                <div className="cover">{n.coverIcon}</div>
+                <NewsCover post={n} />
                 <div className="body">
                   <div className="meta">{n.author} • {n.createdAt}</div>
                   <h3>{n.title}</h3>
