@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="120 0 300 190" fill="none"><defs><linearGradient id="hgh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f3750"/><stop offset="1" stop-color="#141824"/></linearGradient></defs>
+<path d="M208 108 C208 -6, 332 -6, 332 108" stroke="#2a3142" stroke-width="12" stroke-linecap="round"/>
+<path d="M208 108 C208 0, 332 0, 332 108" stroke="#ec4899" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 9"/>
+<rect x="186" y="86" width="42" height="72" rx="18" fill="url(#hgh)" stroke="#3a4256" stroke-width="3"/>
+<rect x="312" y="86" width="42" height="72" rx="18" fill="url(#hgh)" stroke="#3a4256" stroke-width="3"/>
+<circle cx="207" cy="122" r="9" fill="#a855f7"/><circle cx="333" cy="122" r="9" fill="#22d3ee"/>
+<path d="M190 148 C170 178, 200 186, 230 178" stroke="#3a4256" stroke-width="4" stroke-linecap="round"/>
+<circle cx="232" cy="178" r="6" fill="#ec4899"/></svg>
