@@ -32,10 +32,10 @@ export const BANKS = [
  * accountName   : tên chủ tài khoản, VIẾT HOA, KHÔNG DẤU
  */
 export const BANK_ACCOUNT = {
-  bankBin: "970436",
-  bankName: "Vietcombank (DEMO)",
-  accountNumber: "0071000999999",
-  accountName: "CONG TY GVN GAMING DEMO",
+  bankBin: "970416",
+  bankName: "ACB",
+  accountNumber: "41194437",
+  accountName: "LA MINH THUAN",
 };
 // Tương thích code cũ
 export const DEMO_BANK_ACCOUNT = BANK_ACCOUNT;
