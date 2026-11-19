@@ -3,20 +3,44 @@
  * chuẩn EMVCo QR Code for Payment Systems mà VietQR (NAPAS) đang sử dụng tại Việt Nam
  * (định dạng TLV: Tag - Length - Value, kết thúc bằng CRC16-CCITT).
  *
- * ⚠️ LƯU Ý QUAN TRỌNG: Ngân hàng (bankBin) và số tài khoản (accountNumber) bên dưới
- * là thông tin DEMO phục vụ đồ án, KHÔNG phải tài khoản nhận tiền thật. Mã BIN ngân
+ * LƯU Ý: mặc định bên dưới là thông tin DEMO, KHÔNG phải tài khoản nhận tiền thật.
+ * Muốn QR quét ra đúng tài khoản của nhóm, hãy sửa BANK_ACCOUNT bên dưới. Mã BIN ngân
  * hàng dùng ở đây là mã định tuyến công khai do NAPAS phát hành (tương tự mã vùng
  * điện thoại), không phải thông tin bí mật. Khi triển khai thực tế, cần thay bằng
  * tài khoản doanh nghiệp đã đăng ký dịch vụ VietQR với ngân hàng.
  */
 
-// Thông tin tài khoản DEMO của "cửa hàng" — KHÔNG phải tài khoản thật
-export const DEMO_BANK_ACCOUNT = {
-  bankBin: "970436", // mã BIN NAPAS công khai của Vietcombank, chỉ dùng làm ví dụ minh họa
+// Danh sách mã BIN NAPAS của một số ngân hàng phổ biến (mã định tuyến công khai)
+export const BANKS = [
+  { bin: "970436", short: "Vietcombank" },
+  { bin: "970422", short: "MB Bank" },
+  { bin: "970407", short: "Techcombank" },
+  { bin: "970418", short: "BIDV" },
+  { bin: "970415", short: "VietinBank" },
+  { bin: "970416", short: "ACB" },
+  { bin: "970423", short: "TPBank" },
+  { bin: "970432", short: "VPBank" },
+  { bin: "970403", short: "Sacombank" },
+  { bin: "970405", short: "Agribank" },
+];
+
+/**
+ * ====== CẤU HÌNH TÀI KHOẢN NHẬN TIỀN — SỬA 4 DÒNG DƯỚI ĐÂY ======
+ * bankBin       : mã BIN ngân hàng (xem danh sách BANKS ở trên)
+ * bankName      : tên ngân hàng hiển thị trên trang đơn hàng
+ * accountNumber : số tài khoản nhận tiền
+ * accountName   : tên chủ tài khoản, VIẾT HOA, KHÔNG DẤU
+ */
+export const BANK_ACCOUNT = {
+  bankBin: "970436",
   bankName: "Vietcombank (DEMO)",
   accountNumber: "0071000999999",
   accountName: "CONG TY GVN GAMING DEMO",
 };
+// Tương thích code cũ
+export const DEMO_BANK_ACCOUNT = BANK_ACCOUNT;
+// true khi vẫn dùng tài khoản mẫu (để hiện cảnh báo DEMO trên giao diện)
+export const IS_DEMO_ACCOUNT = BANK_ACCOUNT.accountNumber === "0071000999999";
 
 function crc16ccitt(input) {
   let crc = 0xffff;
@@ -39,9 +63,9 @@ function tlv(id, value) {
  * dynamic — có sẵn số tiền — nếu có amount).
  */
 export function buildVietQRPayload({
-  bankBin = DEMO_BANK_ACCOUNT.bankBin,
-  accountNumber = DEMO_BANK_ACCOUNT.accountNumber,
-  accountName = DEMO_BANK_ACCOUNT.accountName,
+  bankBin = BANK_ACCOUNT.bankBin,
+  accountNumber = BANK_ACCOUNT.accountNumber,
+  accountName = BANK_ACCOUNT.accountName,
   amount,
   message = "",
   city = "HO CHI MINH",
