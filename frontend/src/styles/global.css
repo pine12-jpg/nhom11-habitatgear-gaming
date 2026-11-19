@@ -232,8 +232,10 @@ p { margin: 0 0 10px; }
 .spotlight-eyebrow { font-size: 11.5px; text-transform: uppercase; letter-spacing: .6px; color: #ffb4b4; font-weight: 700; }
 .spotlight-text h3 { font-size: 19px; margin: 4px 0; }
 .spotlight-text p { color: #d7dbe3; font-size: 13px; margin: 0; }
-.spotlight-cta { flex-shrink: 0; border-color: #fff; color: #fff; }
-.spotlight-cta:hover { background: rgba(255,255,255,.12); }
+.spotlight-banner .spotlight-cta {
+  flex-shrink: 0; background: transparent; color: #fff; border: 1.5px solid #fff; font-weight: 700;
+}
+.spotlight-banner .spotlight-cta:hover { background: rgba(255,255,255,.18); color: #fff; }
 @media (max-width: 700px) { .spotlight-banner { flex-direction: column; text-align: center; } }
 
 .brand-strip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; }
