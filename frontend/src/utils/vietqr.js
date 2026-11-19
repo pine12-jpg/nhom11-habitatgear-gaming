@@ -81,8 +81,6 @@ export function buildVietQRPayload({
     tlv("53", "704") +
     (amount ? tlv("54", String(Math.max(0, Math.round(amount)))) : "") +
     tlv("58", "VN") +
-    tlv("59", accountName.slice(0, 25)) +
-    tlv("60", city.slice(0, 15)) +
     (additional ? tlv("62", additional) : "");
 
   payload += "6304";

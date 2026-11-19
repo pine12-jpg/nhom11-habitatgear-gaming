@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { buildVietQRPayload, BANK_ACCOUNT, IS_DEMO_ACCOUNT } from "../utils/vietqr";
 import { formatVND } from "../utils/format";
@@ -16,6 +16,14 @@ import { useToast } from "../context/ToastContext";
 export default function PaymentQR({ order }) {
   const toast = useToast();
   const canvasRef = useRef(null);
+
+  // Ẩn nút chat nổi (góc dưới trái) khi đang hiện QR để nó không che mã khi quét
+  const showsQR = !!order && order.paymentStatus !== "paid" && ["bank", "momo", "zalopay"].includes(order.paymentMethod);
+  useEffect(() => {
+    if (!showsQR) return undefined;
+    document.body.classList.add("has-payment-qr");
+    return () => document.body.classList.remove("has-payment-qr");
+  }, [showsQR]);
 
   if (!order || order.paymentStatus === "paid") return null;
   if (!["bank", "momo", "zalopay"].includes(order.paymentMethod)) return null;

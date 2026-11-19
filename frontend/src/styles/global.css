@@ -639,6 +639,7 @@ table.data-table tr:hover td { background: var(--gray-50); }
 
 /* ---------- Payment QR ---------- */
 .qr-layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+body.has-payment-qr .cb-fab, body.has-payment-qr .cb-hint { display: none; }
 .qr-box { background: #fff; border: 1px solid var(--gray-200); border-radius: var(--radius-sm); padding: 14px; flex-shrink: 0; }
 
 .muted { color: var(--gray-600); }
