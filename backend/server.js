@@ -28,7 +28,10 @@ app.use("/api", catalogRoutes); // /categories, /brands, /home, /products...
 app.use("/api", orderRoutes); // /orders, /shipping-methods, /vouchers/validate
 app.use("/api", contentRoutes); // /news, /showrooms, /tradein
 app.use("/api/admin", adminRoutes);
-
+// ---- Swagger API docs ----
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./src/swagger");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // 404 cho các route /api không tồn tại
 app.use("/api", (req, res) => res.status(404).json({ message: "Không tìm thấy API endpoint." }));
 
