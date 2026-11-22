@@ -1,0 +1,186 @@
+tags:
+  - name: Orders
+    description: Đặt hàng, thanh toán, đơn hàng và khuyến mãi
+
+paths:
+  /api/orders/preview:
+    post:
+      summary: Xem trước giá đơn hàng
+      description: Tính tạm tính, phí ship, giảm giá (voucher, HSSV, thu cũ đổi mới) và tổng tiền mà chưa tạo đơn thật.
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [productId, quantity]
+                    properties:
+                      productId: { type: integer, example: 1 }
+                      quantity: { type: integer, example: 1 }
+                shippingMethod:
+                  type: string
+                  enum: [standard, express, pickup]
+                  default: standard
+                voucherCode: { type: string, example: GVNGAME10 }
+                tradeInId: { type: integer, description: Id yêu cầu thu cũ đổi mới đã được duyệt }
+      responses:
+        "200":
+          description: Kết quả tính giá gồm subtotal, shippingFee, voucherDiscount, hssvDiscount, tradeInDiscount, totalDiscount, total
+        "400":
+          description: Giỏ hàng trống, sản phẩm không đủ kho, mã giảm giá sai hoặc phương thức vận chuyển không hợp lệ
+        "401":
+          description: Chưa đăng nhập
+
+  /api/shipping-methods:
+    get:
+      summary: Phương thức vận chuyển và trả góp
+      description: Trả về các phương thức giao hàng kèm phí, mốc miễn phí ship (từ 3 triệu) và điều kiện trả góp.
+      tags: [Orders]
+      responses:
+        "200":
+          description: Gồm freeShipFrom, methods và installment
+
+  /api/vouchers/validate:
+    post:
+      summary: Kiểm tra mã giảm giá (US21)
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code, subtotal]
+              properties:
+                code: { type: string, example: GVNGAME10 }
+                subtotal: { type: number, description: Tổng tiền hàng, example: 5000000 }
+      responses:
+        "200":
+          description: Mã hợp lệ, trả về code và số tiền được giảm
+        "400":
+          description: Mã không tồn tại, hết hạn hoặc chưa đạt giá trị đơn tối thiểu
+        "401":
+          description: Chưa đăng nhập
+
+  /api/orders:
+    post:
+      summary: Đặt hàng (US14, US15, US16, US17)
+      description: |
+        Tạo đơn hàng, trừ kho và gửi email xác nhận (mô phỏng).
+        Ví MoMo và ZaloPay được mô phỏng thanh toán thành công ngay. COD ghi nhận chưa thanh toán. Chuyển khoản và trả góp chờ xác nhận.
+        Trả góp 0% chỉ áp dụng cho đơn từ 3.000.000đ với kỳ hạn 3, 6 hoặc 12 tháng.
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, shipping, paymentMethod]
+              properties:
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [productId, quantity]
+                    properties:
+                      productId: { type: integer, example: 1 }
+                      quantity: { type: integer, example: 1 }
+                shipping:
+                  type: object
+                  required: [name, phone, address]
+                  properties:
+                    name: { type: string, example: Nguyen Van Khach }
+                    phone: { type: string, example: "0912345678" }
+                    address: { type: string, example: "123 Le Loi, Quan 1, TP.HCM" }
+                    note: { type: string, example: Giao gio hanh chinh }
+                shippingMethod:
+                  type: string
+                  enum: [standard, express, pickup]
+                  default: standard
+                paymentMethod:
+                  type: string
+                  enum: [cod, bank, momo, zalopay, installment]
+                  example: cod
+                installmentMonths:
+                  type: integer
+                  enum: [3, 6, 12]
+                  description: Chỉ cần khi paymentMethod là installment
+                voucherCode: { type: string, example: GVNGAME10 }
+                tradeInId: { type: integer, description: Id yêu cầu thu cũ đổi mới đã được duyệt }
+      responses:
+        "201":
+          description: Đặt hàng thành công, trả về thông tin đơn hàng kèm danh sách sản phẩm
+        "400":
+          description: Thiếu thông tin giao hàng, giỏ hàng lỗi, sản phẩm không đủ kho hoặc thông tin thanh toán không hợp lệ
+        "401":
+          description: Chưa đăng nhập
+
+  /api/orders/mine:
+    get:
+      summary: Lịch sử đơn hàng của tôi (US18)
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách đơn hàng của người dùng hiện tại, mới nhất trước
+        "401":
+          description: Chưa đăng nhập
+
+  /api/orders/{id}:
+    get:
+      summary: Chi tiết đơn hàng
+      description: Khách chỉ xem được đơn của mình. Tài khoản admin xem được mọi đơn.
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id đơn hàng
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Chi tiết đơn hàng kèm danh sách sản phẩm
+        "401":
+          description: Chưa đăng nhập
+        "404":
+          description: Không tìm thấy đơn hàng
+
+  /api/orders/{id}/cancel:
+    post:
+      summary: Hủy đơn hàng (US19)
+      description: Chỉ hủy được đơn đang ở trạng thái processing (chưa giao đi). Kho sẽ được hoàn lại.
+      tags: [Orders]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id đơn hàng
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Hủy đơn thành công
+        "400":
+          description: Đơn không còn ở trạng thái cho phép hủy
+        "401":
+          description: Chưa đăng nhập
+        "404":
+          description: Không tìm thấy đơn hàng

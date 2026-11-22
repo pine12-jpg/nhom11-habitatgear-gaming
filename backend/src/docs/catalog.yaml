@@ -1,0 +1,175 @@
+tags:
+  - name: Catalog
+    description: Trang chủ, danh mục, hãng, sản phẩm và đánh giá
+
+paths:
+  /api/categories:
+    get:
+      summary: Danh sách ngành hàng
+      description: Trả về các ngành hàng kèm số sản phẩm (productCount).
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Danh sách ngành hàng
+
+  /api/brands:
+    get:
+      summary: Danh sách hãng
+      description: Trả về các hãng kèm số sản phẩm (productCount).
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Danh sách hãng
+
+  /api/home:
+    get:
+      summary: Dữ liệu trang chủ (US06)
+      description: Gồm sản phẩm nổi bật, đang khuyến mãi, mới nhất, hãng, ngành hàng và 3 tin mới.
+      tags: [Catalog]
+      responses:
+        "200":
+          description: Dữ liệu trang chủ gồm các nhóm featured, onSale, newest, brands, categories, news
+
+  /api/products/suggest:
+    get:
+      summary: Gợi ý từ khóa khi gõ tìm kiếm (US09)
+      description: Tối đa 6 gợi ý, tìm theo tên sản phẩm hoặc tên hãng và không phân biệt dấu tiếng Việt.
+      tags: [Catalog]
+      parameters:
+        - in: query
+          name: q
+          required: true
+          description: Từ khóa đang gõ
+          schema: { type: string, example: ban phim }
+      responses:
+        "200":
+          description: Danh sách gợi ý gồm id, name, finalPrice, categorySlug, brandName
+
+  /api/products/compare:
+    get:
+      summary: So sánh 2 đến 3 sản phẩm (US11)
+      tags: [Catalog]
+      parameters:
+        - in: query
+          name: ids
+          required: true
+          description: Các id sản phẩm cách nhau bằng dấu phẩy, tối đa 3
+          schema: { type: string, example: "1,2" }
+      responses:
+        "200":
+          description: Thông tin các sản phẩm cần so sánh
+        "400":
+          description: Chọn ít hơn 2 sản phẩm
+
+  /api/products:
+    get:
+      summary: Danh sách sản phẩm, tìm kiếm, lọc, phân trang (US07, US10)
+      tags: [Catalog]
+      parameters:
+        - in: query
+          name: q
+          description: Từ khóa tìm theo tên, hãng hoặc mô tả
+          schema: { type: string }
+        - in: query
+          name: brand
+          description: Id hãng, nhiều hãng cách nhau bằng dấu phẩy
+          schema: { type: string, example: "1,2" }
+        - in: query
+          name: category
+          description: Id hoặc slug của ngành hàng
+          schema: { type: string }
+        - in: query
+          name: minPrice
+          description: Giá thấp nhất (tính theo giá cuối sau khuyến mãi)
+          schema: { type: number }
+        - in: query
+          name: maxPrice
+          description: Giá cao nhất (tính theo giá cuối sau khuyến mãi)
+          schema: { type: number }
+        - in: query
+          name: cpu
+          description: Lọc theo CPU
+          schema: { type: string }
+        - in: query
+          name: gpu
+          description: Lọc theo GPU
+          schema: { type: string }
+        - in: query
+          name: sale
+          description: Chỉ lấy sản phẩm đang khuyến mãi khi truyền 1
+          schema: { type: string, enum: ["1"] }
+        - in: query
+          name: featured
+          description: Chỉ lấy sản phẩm nổi bật khi truyền 1
+          schema: { type: string, enum: ["1"] }
+        - in: query
+          name: sort
+          description: Cách sắp xếp, mặc định là mới nhất
+          schema:
+            type: string
+            enum: [price-asc, price-desc, name, discount]
+        - in: query
+          name: page
+          description: Trang hiện tại
+          schema: { type: integer, default: 1 }
+        - in: query
+          name: limit
+          description: Số sản phẩm mỗi trang, từ 1 đến 60
+          schema: { type: integer, default: 12 }
+      responses:
+        "200":
+          description: Danh sách sản phẩm kèm total, page, limit, totalPages
+
+  /api/products/{id}:
+    get:
+      summary: Chi tiết sản phẩm (US08)
+      description: Kèm danh sách đánh giá và tối đa 4 sản phẩm liên quan cùng ngành hàng.
+      tags: [Catalog]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id sản phẩm
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Chi tiết sản phẩm gồm reviews và related
+        "404":
+          description: Không tìm thấy sản phẩm
+
+  /api/products/{id}/reviews:
+    post:
+      summary: Đánh giá sản phẩm (US20)
+      description: Chỉ khách đã mua sản phẩm (đơn chưa hủy) mới được đánh giá, và mỗi người chỉ đánh giá một lần.
+      tags: [Catalog]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id sản phẩm
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [rating, comment]
+              properties:
+                rating: { type: integer, minimum: 1, maximum: 5, example: 5 }
+                comment: { type: string, description: Ít nhất 5 ký tự, example: San pham rat tot }
+      responses:
+        "201":
+          description: Gửi đánh giá thành công
+        "400":
+          description: Số sao ngoài khoảng 1 đến 5 hoặc bình luận quá ngắn
+        "401":
+          description: Chưa đăng nhập
+        "403":
+          description: Chưa mua sản phẩm này
+        "404":
+          description: Không tìm thấy sản phẩm
+        "409":
+          description: Đã đánh giá sản phẩm này rồi

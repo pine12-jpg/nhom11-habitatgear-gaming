@@ -1,0 +1,246 @@
+tags:
+  - name: Auth
+    description: Tài khoản và xác thực
+
+components:
+  schemas:
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string, description: Mã JWT dùng cho nút Authorize }
+        user: { type: object }
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Đăng ký tài khoản (US01)
+      description: Đăng ký bằng email hoặc số điện thoại. Cần có ít nhất một trong hai.
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, password]
+              properties:
+                name: { type: string, example: Nguyen Van A }
+                email: { type: string, example: user@example.com }
+                phone: { type: string, example: "0901234567" }
+                password: { type: string, example: Abc@123 }
+      responses:
+        "201":
+          description: Đăng ký thành công, trả về token và thông tin người dùng
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Dữ liệu không hợp lệ
+        "409":
+          description: Email hoặc số điện thoại đã được đăng ký
+
+  /api/auth/login:
+    post:
+      summary: Đăng nhập khách hàng (US02)
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier: { type: string, description: Email hoặc số điện thoại, example: khach@example.com }
+                password: { type: string, example: Khach@123 }
+      responses:
+        "200":
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Thiếu tài khoản hoặc mật khẩu
+        "401":
+          description: Sai tài khoản hoặc mật khẩu
+        "403":
+          description: Tài khoản đang bị khóa
+
+  /api/auth/admin-login:
+    post:
+      summary: Đăng nhập trang quản trị (US30)
+      description: Chỉ tài khoản có role admin mới đăng nhập được.
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [identifier, password]
+              properties:
+                identifier: { type: string, example: admin@gvngaming.vn }
+                password: { type: string, example: Admin@123 }
+      responses:
+        "200":
+          description: Đăng nhập quản trị thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Thông tin đăng nhập quản trị không đúng
+
+  /api/auth/google:
+    post:
+      summary: Đăng nhập nhanh bằng Google (US03, mô phỏng)
+      description: Bản đồ án mô phỏng luồng Google. Backend tạo hoặc liên kết tài khoản theo email rồi trả token.
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, example: user@gmail.com }
+                name: { type: string, example: Nguyen Van A }
+      responses:
+        "200":
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Email không hợp lệ
+        "403":
+          description: Tài khoản đang bị khóa
+
+  /api/auth/forgot-password:
+    post:
+      summary: Quên mật khẩu (US04)
+      description: Tạo mã đặt lại mật khẩu có hiệu lực 15 phút. Luôn trả về cùng một thông báo để không lộ email nào đã đăng ký.
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, example: khach@example.com }
+      responses:
+        "200":
+          description: Đã xử lý yêu cầu. Khi chạy ngoài production sẽ có thêm devResetToken để test.
+
+  /api/auth/reset-password:
+    post:
+      summary: Đặt lại mật khẩu bằng mã
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, password]
+              properties:
+                token: { type: string, description: Mã nhận được từ forgot-password }
+                password: { type: string, example: Matkhaumoi@123 }
+      responses:
+        "200":
+          description: Đặt lại mật khẩu thành công
+        "400":
+          description: Mã không hợp lệ, đã hết hạn hoặc mật khẩu quá ngắn
+
+  /api/auth/me:
+    get:
+      summary: Xem thông tin cá nhân (US05)
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Thông tin người dùng hiện tại
+        "401":
+          description: Chưa đăng nhập
+        "404":
+          description: Không tìm thấy tài khoản
+    put:
+      summary: Cập nhật thông tin cá nhân (US05)
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string, example: Nguyen Van B }
+                phone: { type: string, example: "0912345678" }
+                address: { type: string, example: "12 Nguyen Hue, Quan 1, TP.HCM" }
+      responses:
+        "200":
+          description: Cập nhật thành công
+        "400":
+          description: Họ tên trống hoặc số điện thoại không hợp lệ
+        "401":
+          description: Chưa đăng nhập
+        "409":
+          description: Số điện thoại đã được tài khoản khác dùng
+
+  /api/auth/password:
+    put:
+      summary: Đổi mật khẩu
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [oldPassword, newPassword]
+              properties:
+                oldPassword: { type: string, example: Khach@123 }
+                newPassword: { type: string, example: Khach@456 }
+      responses:
+        "200":
+          description: Đổi mật khẩu thành công
+        "400":
+          description: Mật khẩu cũ sai hoặc mật khẩu mới quá ngắn
+        "401":
+          description: Chưa đăng nhập
+
+  /api/auth/hssv:
+    post:
+      summary: Xác thực học sinh - sinh viên (US22)
+      description: Mã số gồm 6 đến 15 ký tự chữ hoặc số. Sau khi xác thực được giảm 5% mỗi đơn.
+      tags: [Auth]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [studentId, school]
+              properties:
+                studentId: { type: string, example: SV123456 }
+                school: { type: string, example: Dai hoc Cong nghe Thong tin }
+      responses:
+        "200":
+          description: Xác thực HSSV thành công
+        "400":
+          description: Thiếu hoặc sai định dạng thông tin
+        "401":
+          description: Chưa đăng nhập

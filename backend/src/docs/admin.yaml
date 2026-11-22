@@ -1,0 +1,585 @@
+tags:
+  - name: Admin
+    description: Quản trị (cần đăng nhập bằng tài khoản admin)
+
+components:
+  responses:
+    Unauthorized:
+      description: Chưa đăng nhập
+    Forbidden:
+      description: Không có quyền admin
+  schemas:
+    ProductInput:
+      type: object
+      required: [name, brand, category, price, stock]
+      properties:
+        name: { type: string, example: Chuot Logitech G502 }
+        brand: { type: integer, description: Id hãng, example: 1 }
+        category: { type: integer, description: Id ngành hàng, example: 1 }
+        price: { type: number, example: 1500000 }
+        salePrice: { type: number, description: Giá khuyến mãi phải nhỏ hơn giá gốc, example: 1200000 }
+        image: { type: string, description: Đường dẫn ảnh, để trống sẽ dùng hình minh họa, example: /products/g502.jpg }
+        cpu: { type: string }
+        gpu: { type: string }
+        ram: { type: string }
+        storage: { type: string }
+        screen: { type: string }
+        description: { type: string }
+        stock: { type: integer, minimum: 0, example: 10 }
+        featured: { type: boolean, example: false }
+    NewsInput:
+      type: object
+      required: [title, content]
+      properties:
+        title: { type: string, example: Danh gia chuot Logitech G502 }
+        summary: { type: string, description: Bỏ trống sẽ lấy 120 ký tự đầu của nội dung }
+        content: { type: string, description: Ít nhất 20 ký tự, example: Noi dung bai viet toi thieu hai muoi ky tu }
+        coverImage: { type: string, example: /news/news-default.svg }
+
+paths:
+  /api/admin/products:
+    get:
+      summary: Danh sách sản phẩm cho quản trị (US31)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách toàn bộ sản phẩm, mới nhất trước
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: Thêm sản phẩm (US31)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "201":
+          description: Thêm sản phẩm thành công
+        "400":
+          description: Dữ liệu sản phẩm không hợp lệ
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/products/{id}:
+    put:
+      summary: Sửa sản phẩm (US31)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id sản phẩm
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductInput"
+      responses:
+        "200":
+          description: Sửa sản phẩm thành công
+        "400":
+          description: Dữ liệu sản phẩm không hợp lệ
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy sản phẩm
+    delete:
+      summary: Xóa sản phẩm (US31)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id sản phẩm
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Đã xóa sản phẩm
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy sản phẩm
+
+  /api/admin/products/{id}/stock:
+    put:
+      summary: Cập nhật tồn kho (US34)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id sản phẩm
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [stock]
+              properties:
+                stock: { type: integer, minimum: 0, example: 20 }
+      responses:
+        "200":
+          description: Cập nhật tồn kho thành công
+        "400":
+          description: Số lượng tồn kho không hợp lệ
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy sản phẩm
+
+  /api/admin/brands:
+    get:
+      summary: Danh sách hãng (US32)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách hãng kèm số sản phẩm
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+    post:
+      summary: Thêm hãng (US32)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, example: Logitech }
+      responses:
+        "201":
+          description: Thêm hãng thành công
+        "400":
+          description: Tên hãng trống
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Hãng đã tồn tại
+
+  /api/admin/brands/{id}:
+    put:
+      summary: Sửa tên hãng (US32)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id hãng
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string, example: Logitech G }
+      responses:
+        "200":
+          description: Sửa hãng thành công
+        "400":
+          description: Tên hãng trống
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy hãng
+        "409":
+          description: Tên hãng đã tồn tại
+    delete:
+      summary: Xóa hãng (US32)
+      description: Không xóa được hãng đang có sản phẩm.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id hãng
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Đã xóa hãng
+        "400":
+          description: Hãng đang có sản phẩm nên không xóa được
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy hãng
+
+  /api/admin/orders:
+    get:
+      summary: Danh sách đơn hàng (US33)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          description: Lọc theo trạng thái đơn
+          schema:
+            type: string
+            enum: [processing, shipping, delivered, cancelled]
+      responses:
+        "200":
+          description: Danh sách đơn hàng kèm tên khách và sản phẩm, mới nhất trước
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/orders/{id}/status:
+    put:
+      summary: Cập nhật trạng thái đơn hàng (US33)
+      description: Đơn đã hủy hoặc đã giao thì không đổi được nữa. Hủy đơn sẽ hoàn lại kho. Đơn COD giao thành công được tính là đã thu tiền.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id đơn hàng
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [processing, shipping, delivered, cancelled]
+                  example: shipping
+      responses:
+        "200":
+          description: Cập nhật trạng thái thành công
+        "400":
+          description: Trạng thái không hợp lệ hoặc đơn không còn đổi được
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy đơn hàng
+
+  /api/admin/orders/{id}/payment:
+    put:
+      summary: Xác nhận thanh toán đơn hàng (US33)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id đơn hàng
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paymentStatus:
+                  type: string
+                  description: Truyền paid để xác nhận đã thanh toán, giá trị khác sẽ về pending
+                  enum: [paid, pending]
+                  example: paid
+      responses:
+        "200":
+          description: Cập nhật thanh toán thành công
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy đơn hàng
+
+  /api/admin/users:
+    get:
+      summary: Danh sách tài khoản (US36)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách tài khoản kèm số đơn hàng
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/users/{id}/lock:
+    put:
+      summary: Khóa hoặc mở khóa tài khoản (US36)
+      description: Khóa tạm thời khi days lớn hơn 0, để trống hoặc 0 là khóa vĩnh viễn. Không khóa được tài khoản admin.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id tài khoản
+          schema: { type: integer, example: 2 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                locked:
+                  type: boolean
+                  description: true để khóa, false để mở khóa
+                  example: true
+                days:
+                  type: integer
+                  description: Số ngày khóa, bỏ trống để khóa vĩnh viễn
+                  example: 7
+                reason:
+                  type: string
+                  description: Lý do khóa, tối đa 300 ký tự
+                  example: Vi pham chinh sach
+      responses:
+        "200":
+          description: Cập nhật khóa tài khoản thành công
+        "400":
+          description: Không thể khóa tài khoản quản trị viên
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy tài khoản
+
+  /api/admin/stats:
+    get:
+      summary: Thống kê doanh thu (US35)
+      description: Trả về doanh thu theo ngày (14 ngày gần nhất) hoặc theo tháng (12 tháng gần nhất), tổng quan, top 5 sản phẩm bán chạy và sản phẩm sắp hết hàng.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: range
+          description: Thống kê theo ngày hoặc tháng, mặc định là ngày
+          schema:
+            type: string
+            enum: [day, month]
+            default: day
+      responses:
+        "200":
+          description: Gồm range, series, totals, topProducts, lowStock
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/news:
+    post:
+      summary: Đăng bài viết (US29)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsInput"
+      responses:
+        "201":
+          description: Đăng bài thành công
+        "400":
+          description: Thiếu tiêu đề hoặc nội dung dưới 20 ký tự
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/news/{id}:
+    put:
+      summary: Sửa bài viết (US29)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id bài viết
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewsInput"
+      responses:
+        "200":
+          description: Sửa bài thành công
+        "400":
+          description: Thiếu tiêu đề hoặc nội dung dưới 20 ký tự
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy bài viết
+    delete:
+      summary: Xóa bài viết (US29)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id bài viết
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Đã xóa bài viết
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy bài viết
+
+  /api/admin/tradein:
+    get:
+      summary: Danh sách yêu cầu thu cũ đổi mới (US24)
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Toàn bộ yêu cầu, mới nhất trước
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/tradein/{id}:
+    put:
+      summary: Duyệt hoặc từ chối yêu cầu thu cũ đổi mới (US24)
+      description: Khi duyệt phải nhập giá thu mua lớn hơn 0. Yêu cầu đã được khách dùng cho đơn hàng thì không đổi được.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id yêu cầu
+          schema: { type: integer, example: 1 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [approved, rejected]
+                  example: approved
+                offeredPrice:
+                  type: integer
+                  description: Giá thu mua, bắt buộc khi duyệt
+                  example: 5000000
+                adminNote:
+                  type: string
+                  example: Da kiem tra tinh trang may
+      responses:
+        "200":
+          description: Cập nhật yêu cầu thành công
+        "400":
+          description: Trạng thái không hợp lệ, thiếu giá thu mua hoặc yêu cầu đã được dùng
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Không tìm thấy yêu cầu
+
+  /api/admin/logs:
+    get:
+      summary: Nhật ký thao tác admin (US37)
+      description: Trả về tối đa 200 dòng nhật ký gần nhất.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách nhật ký
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+
+  /api/admin/mail-outbox:
+    get:
+      summary: Hộp thư email giả lập
+      description: Trả về tối đa 50 email xác nhận đã được mô phỏng gửi.
+      tags: [Admin]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách email
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"

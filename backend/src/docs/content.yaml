@@ -1,0 +1,86 @@
+tags:
+  - name: Content
+    description: Tin tức, showroom và thu cũ đổi mới
+
+paths:
+  /api/news:
+    get:
+      summary: Danh sách tin tức và review (US28)
+      description: Sắp xếp bài mới nhất trước.
+      tags: [Content]
+      responses:
+        "200":
+          description: Danh sách bài viết
+
+  /api/news/{id}:
+    get:
+      summary: Chi tiết bài viết (US28)
+      tags: [Content]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: Id bài viết
+          schema: { type: integer, example: 1 }
+      responses:
+        "200":
+          description: Chi tiết bài viết
+        "404":
+          description: Không tìm thấy bài viết
+
+  /api/showrooms:
+    get:
+      summary: Tra cứu showroom (US25)
+      description: Lọc theo từ khóa trong tên hoặc địa chỉ (quận, thành phố), không phân biệt dấu tiếng Việt. Không truyền từ khóa thì trả về tất cả showroom.
+      tags: [Content]
+      parameters:
+        - in: query
+          name: q
+          description: Từ khóa quận hoặc thành phố
+          schema: { type: string, example: quan 1 }
+      responses:
+        "200":
+          description: Danh sách showroom
+
+  /api/tradein:
+    post:
+      summary: Gửi yêu cầu thu cũ đổi mới (US23)
+      description: Yêu cầu được tạo với trạng thái pending, admin sẽ duyệt và báo giá thu mua.
+      tags: [Content]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceType, model, condition]
+              properties:
+                deviceType: { type: string, description: Loại thiết bị, example: Laptop }
+                model: { type: string, description: Tên hoặc mã model, example: ASUS TUF Gaming F15 }
+                condition:
+                  type: string
+                  description: Tình trạng máy
+                  enum: [excellent, good, fair, poor]
+                  example: good
+                description: { type: string, description: Mô tả thêm, example: May con bao hanh 6 thang }
+      responses:
+        "201":
+          description: Gửi yêu cầu thành công, trả về yêu cầu vừa tạo
+        "400":
+          description: Thiếu loại thiết bị, model hoặc tình trạng máy không hợp lệ
+        "401":
+          description: Chưa đăng nhập
+
+  /api/tradein/mine:
+    get:
+      summary: Yêu cầu thu cũ đổi mới của tôi
+      tags: [Content]
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Danh sách yêu cầu của người dùng hiện tại, mới nhất trước
+        "401":
+          description: Chưa đăng nhập
